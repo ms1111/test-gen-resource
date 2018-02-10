@@ -1,0 +1,6 @@
+rootProject.name = 'test-gen-resource'
+include ':dependency'
+include ':webapp'
+
+project(':dependency').projectDir = "$rootDir/dependency" as File
+project(':webapp').projectDir = "$rootDir/webapp" as File

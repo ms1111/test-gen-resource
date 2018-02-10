@@ -1,0 +1,51 @@
+plugins { id "io.spring.dependency-management" version "1.0.3.RELEASE" apply false }
+plugins { id "org.springframework.boot" version '1.5.7.RELEASE' apply false }
+
+ext { springBootVersion = '1.5.7.RELEASE' }
+
+allprojects {
+    apply plugin: 'maven'
+    apply plugin: 'java'
+    apply plugin: 'eclipse-wtp'
+    apply plugin: 'idea'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'ms1111'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/libs-release" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+}
+
+subprojects { subproject ->
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    if (subproject.name.equals("idm-server")) {
+        apply plugin: 'org.springframework.boot'
+        apply plugin: 'war'
+    }
+
+    dependencyManagement {
+        imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+    }
+}
+
+task dependencies {
+    dependsOn subprojects.tasks.grep { it.hasProperty('dependencies') }
+}
+
+// Disable JAR builds for the parent project since it has nothing in it
+jar.enabled=false
